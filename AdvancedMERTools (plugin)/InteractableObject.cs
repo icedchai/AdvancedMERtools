@@ -1,10 +1,14 @@
 ﻿using AdminToys;
 using AdvancedMERTools.Events.Arguments;
 using AdvancedMERTools.Events.Handlers;
+using Interactables.Interobjects.DoorUtils;
+using InventorySystem.Items.Keycards;
 using LabApi.Events;
 using LabApi.Events.Arguments.Interfaces;
 using LabApi.Features.Wrappers;
 using MEC;
+using PlayerRoles;
+using PlayerRoles.FirstPersonControl.Thirdperson.Subcontrollers.OverlayAnims;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +21,8 @@ namespace AdvancedMERTools;
 public class InteractableObject : AMERTInteractable
 {
     public new IODTO Base { get; set; }
+
+    public InteractableObjectDoorPermissionRequester DoorPermRequester { get; set; }
 
     public Config Configs => AdvancedMERTools.Singleton.Config;
 
@@ -40,6 +46,12 @@ public class InteractableObject : AMERTInteractable
     protected void SpawnInteractableToy(AdminToys.PrimitiveObjectToy primitiveObjectToy)
     {
         InteractableToy interactableToy = InteractableToy.Create(primitiveObjectToy.transform, false);
+
+        if (primitiveObjectToy.PrimitiveFlags == PrimitiveFlags.None && primitiveObjectToy.PrimitiveType == PrimitiveType.Sphere)
+        {
+            return;
+        }
+
         switch (primitiveObjectToy.PrimitiveType)
         {
             case PrimitiveType.Plane:
@@ -71,10 +83,10 @@ public class InteractableObject : AMERTInteractable
 
         if (AdvancedMERTools.Singleton.Config.IoToysDebug)
         {
-            LabApi.Features.Wrappers.PrimitiveObjectToy indicator = LabApi.Features.Wrappers.PrimitiveObjectToy.Create(transform, false);
+            LabApi.Features.Wrappers.PrimitiveObjectToy indicator = LabApi.Features.Wrappers.PrimitiveObjectToy.Create(primitiveObjectToy.transform, false);
             indicator.Flags = PrimitiveFlags.Visible;
             indicator.Type = primitiveObjectToy.PrimitiveType;
-            indicator.Transform.localScale = Vector3.one * 1.05f;
+            indicator.Transform.localScale = Vector3.one * 1.1f;
             indicator.Color = new Color(1, 1, 1, 0.2f);
             indicator.Spawn();
         }
@@ -84,6 +96,11 @@ public class InteractableObject : AMERTInteractable
     {
         Base = base.Base as IODTO;
         Log.Debug($"Adding InteractableObject: {gameObject.name} ({OSchematic.Name})");
+
+        DoorPermRequester = new InteractableObjectDoorPermissionRequester();
+
+        DoorPermRequester.PermissionsPolicy = new(Base.RequiredPermissions);
+        DoorPermRequester.RequesterLogSignature = $"AMERT_IO_{gameObject.name} ({OSchematic.Name}";
 
         Register();
     }
@@ -144,6 +161,15 @@ public class InteractableObject : AMERTInteractable
             return;
         }
         Log.Debug($"Player: {player.Nickname} interacted with InteractableObject: {gameObject.name} ({OSchematic.Name}) -- toy id: {toyId}");
+
+        if (Base.RequiredPermissions != DoorPermissionFlags.None)
+        {
+            if (!player.ReferenceHub.GetCombinedPermissions(DoorPermRequester).HasFlagAny(Base.RequiredPermissions))
+            {
+                Log.Debug($"Player: {player.Nickname} failed interact with InteractableObject: {gameObject.name} ({OSchematic.Name}) -- toy id: {toyId} because insufficient keycard permission");
+                return;
+            }
+        }
 
         ModuleGeneralArguments args = new()
         {

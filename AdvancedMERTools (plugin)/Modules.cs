@@ -156,6 +156,7 @@ public class IODTO : MDTO
     public float InteractionMaxRange { get; set; }
     public IPActionType ActionType { get; set; }
     public Scp914Mode Scp914Mode { get; set; }
+    public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
 }
 
 [Serializable]
