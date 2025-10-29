@@ -39,6 +39,7 @@ public class IODTO : DTO
     public List<AudioModule> AudioModules;
     public List<CGNModule> GroovieNoiseToCall;
     public List<CFEModule> FunctionToCall;
+    public KeycardPermissions RequiredPermissions;
 }
 
 [Serializable]
