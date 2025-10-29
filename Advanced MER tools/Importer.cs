@@ -1,14 +1,12 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// Handles importing AMERT components from the compiled objects folder. By icedchai
-/// </summary>
 public static class AmertImporter
 {
     [MenuItem("SchematicManager/Decompile All", priority = 1)]
@@ -27,6 +25,11 @@ public static class AmertImporter
     {
         foreach (Schematic schematic in GameObject.FindObjectsOfType<Schematic>())
         {
+            foreach (var collider in schematic.GetComponentsInChildren<CustomCollider>())
+            {
+                GameObject.DestroyImmediate(collider);
+            }
+
             List<CCDTO> datas = Decompile<CCDTO>(schematic, "Colliders");
             List<FCCDTO> fdatas = Decompile<FCCDTO>(schematic, "FColliders");
 
@@ -61,6 +64,11 @@ public static class AmertImporter
     {
         foreach (Schematic schematic in GameObject.FindObjectsOfType<Schematic>())
         {
+            foreach (var funcExecutor in schematic.GetComponentsInChildren<FunctionExecutor>())
+            {
+                GameObject.DestroyImmediate(funcExecutor);
+            }
+
             List<FEDTO> datas = Decompile<FEDTO>(schematic, "Functions");
 
             foreach (var data in datas)
@@ -75,6 +83,11 @@ public static class AmertImporter
     {
         foreach (Schematic schematic in GameObject.FindObjectsOfType<Schematic>())
         {
+            foreach (var groovyNoise in schematic.GetComponentsInChildren<GroovyNoise>())
+            {
+                GameObject.DestroyImmediate(groovyNoise);
+            }
+
             List<GNDTO> datas = Decompile<GNDTO>(schematic, "GroovyNoises");
 
             foreach (var data in datas)
@@ -95,6 +108,11 @@ public static class AmertImporter
     {
         foreach (Schematic schematic in GameObject.FindObjectsOfType<Schematic>())
         {
+            foreach (var healthObject in schematic.GetComponentsInChildren<HealthObject>())
+            {
+                GameObject.DestroyImmediate(healthObject);
+            }
+
             List<HODTO> datas = Decompile<HODTO>(schematic, "HealthObjects");
             List<FHODTO> fdatas = Decompile<FHODTO>(schematic, "FHealthObjects");
 
@@ -129,6 +147,11 @@ public static class AmertImporter
     {
         foreach (Schematic schematic in GameObject.FindObjectsOfType<Schematic>())
         {
+            foreach (var interactable in schematic.GetComponentsInChildren<InteractableObject>())
+            {
+                GameObject.DestroyImmediate(interactable);
+            }
+
             List<IODTO> datas = Decompile<IODTO>(schematic, "Objects");
             List<FIODTO> fdatas = Decompile<FIODTO>(schematic, "FObjects");
 
