@@ -22,7 +22,7 @@ public class InteractableObject : AMERTInteractable
 {
     public new IODTO Base { get; set; }
 
-    public InteractableObjectDoorPermissionRequester DoorPermRequester { get; set; }
+    public DoorPermissionRequester DoorPermRequester { get; set; }
 
     public Config Configs => AdvancedMERTools.Singleton.Config;
 
@@ -97,10 +97,10 @@ public class InteractableObject : AMERTInteractable
         Base = base.Base as IODTO;
         Log.Debug($"Adding InteractableObject: {gameObject.name} ({OSchematic.Name})");
 
-        DoorPermRequester = new InteractableObjectDoorPermissionRequester();
+        DoorPermRequester = new DoorPermissionRequester();
 
-        DoorPermRequester.PermissionsPolicy = new(Base.RequiredPermissions);
-        DoorPermRequester.RequesterLogSignature = $"AMERT_IO_{gameObject.name} ({OSchematic.Name}";
+        DoorPermRequester.PermissionsPolicy = new(Base.RequiredPermissions, Base.RequireAllPermissions);
+        DoorPermRequester.RequesterLogSignature = $"AMERT_{this.GetType().Name}_{gameObject.name} ({OSchematic.Name}";
 
         Register();
     }
@@ -242,6 +242,11 @@ public class FInteractableObject : InteractableObject
         Base = ((AMERTInteractable)this).Base as FIODTO;
         Log.Debug($"Adding FInteractableObject: {gameObject.name} ({OSchematic.Name})");
 
+        DoorPermRequester = new DoorPermissionRequester();
+
+        DoorPermRequester.PermissionsPolicy = new(Base.RequiredPermissions, Base.RequireAllPermissions);
+        DoorPermRequester.RequesterLogSignature = $"AMERT_{this.GetType().Name}_{gameObject.name} ({OSchematic.Name}";
+
         Register();
     }
 
@@ -252,6 +257,15 @@ public class FInteractableObject : InteractableObject
             return;
         }
         Log.Debug($"Player: {player.Nickname} interacted with FInteractableObject: {gameObject.name} ({OSchematic.Name}) -- toy id: {toyId}");
+
+        if (Base.RequiredPermissions != DoorPermissionFlags.None)
+        {
+            if (!player.ReferenceHub.GetCombinedPermissions(DoorPermRequester).HasFlagAny(Base.RequiredPermissions))
+            {
+                Log.Debug($"Player: {player.Nickname} failed interact with InteractableObject: {gameObject.name} ({OSchematic.Name}) -- toy id: {toyId} because insufficient keycard permission");
+                return;
+            }
+        }
 
         FunctionArgument args = new FunctionArgument(this, player);
         var actionExecutors = new Dictionary<IPActionType, Action>

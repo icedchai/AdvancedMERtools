@@ -157,6 +157,7 @@ public class IODTO : MDTO
     public IPActionType ActionType { get; set; }
     public Scp914Mode Scp914Mode { get; set; }
     public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
+    public bool RequireAllPermissions { get; set; } = true;
 }
 
 [Serializable]
@@ -166,6 +167,8 @@ public class FIODTO : FMDTO
     public ScriptValue InteractionMaxRange { get; set; }
     public IPActionType ActionType { get; set; }
     public ScriptValue Scp914Mode { get; set; }
+    public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
+    public bool RequireAllPermissions { get; set; } = true;
 }
 
 [Serializable]

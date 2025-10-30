@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace AdvancedMERTools
 {
-    public class InteractableObjectDoorPermissionRequester : IDoorPermissionRequester
+    public class DoorPermissionRequester : IDoorPermissionRequester
     {
-        public InteractableObjectDoorPermissionRequester() { }
+        public DoorPermissionRequester() { }
 
         public DoorPermissionsPolicy PermissionsPolicy { get; set; }
 
