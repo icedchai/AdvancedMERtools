@@ -3,9 +3,9 @@ using LabApi.Features.Wrappers;
 using PlayerRoles;
 using PlayerRoles.FirstPersonControl;
 
-namespace AdvancedMERTools;
+namespace AdvancedMERTools.Features.Extensions;
 
-public static class LabApiExtensions
+public static class PlayerExtensions
 {
     public static bool IsAirborne(this Player player)
     {

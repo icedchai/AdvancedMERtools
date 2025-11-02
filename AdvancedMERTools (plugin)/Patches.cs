@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using Utf8Json;
 using System.Linq;
+using AdvancedMERTools.Features.CustomObjects;
 
 namespace AdvancedMERTools;
 

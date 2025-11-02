@@ -1,5 +1,6 @@
 ﻿global using Log = AdvancedMERTools.AutoDebugLogger;
-
+using AdvancedMERTools.Events.Handlers;
+using AdvancedMERTools.Features.CustomObjects;
 using CommandSystem;
 using HarmonyLib;
 using LabApi.Events.CustomHandlers;
