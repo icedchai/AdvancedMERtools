@@ -15,9 +15,9 @@ public class DummyDoor : MonoBehaviour
 {
     public Animator Animator { get; private set; }
 
-    public SerializableDoor SerializableDoor { get; private set; }
+    public SerializableDoor SerializableDoor { get; internal set; }
 
-    public Door RealDoor { get; private set; } = null;
+    public Door RealDoor { get; internal set; } = null;
 
     public static readonly Config Config = AdvancedMERTools.Singleton.Config;
 

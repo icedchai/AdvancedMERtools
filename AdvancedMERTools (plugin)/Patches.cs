@@ -9,10 +9,11 @@ using System.IO;
 using Utf8Json;
 using System.Linq;
 using AdvancedMERTools.Features.CustomObjects;
+using Interactables.Interobjects;
 
 namespace AdvancedMERTools;
 
-// TODO: DoorObject doesn't exist anymore.. no similar methods in SerializableDoor... idk what to patch
+// TODO: DoorObject doesn't exist anymore.. no similar methods in SerializableDoor... idk what to patch [NOTE: Potentially solved?]
 //[HarmonyPatch(typeof(DoorObject), nameof(DoorObject.Init))]
 //public class DoorSpawnPatcher
 //{
@@ -32,22 +33,51 @@ namespace AdvancedMERTools;
 //    }
 //}
 
-//[HarmonyPatch(nameof(DoorVariant), nameof(DoorVariant.NetworkTargetState), MethodType.Setter)]
-//internal static class DoorVariantPatcher
-//{
-//    public static void Prefix(DoorVariant instance, bool value)
-//    {
-//        Log.Debug($"Patching DoorVariant.NetworkTargetState: {instance} - value: {value}");
-//        if (instance != null)
-//        {
-//            DummyDoor d = AdvancedMERTools.Singleton.DummyDoors.Find(x => x.RealDoor == Door.Get(instance));
-//            if (d != null)
-//            {
-//                d.OnInteractDoor(value);
-//            }
-//        }
-//    }
-//}
+[HarmonyPatch(typeof(SerializableDoor), nameof(SerializableDoor.SetupDoor))]
+public static class DoorPatchSpawner
+{
+    private static void Prefix(SerializableDoor __instance, DoorVariant doorVariant)
+    {
+        if (AdvancedMERTools.Configs.AutoRun && doorVariant.gameObject.TryGetComponent(out BasicDoor basicDoor) && basicDoor.Rooms.Length == 0)
+        {
+            string doorSchematicName = "DoorLCZ";
+            //TODO: Add cases for the rest of the basic door variants.
+            if (basicDoor.DoorName.Contains("HCZ"))
+            {
+                doorSchematicName = "DoorHCZ";
+            }
+
+            SchematicObject doorSchematic = ObjectSpawner.SpawnSchematic(doorSchematicName, basicDoor.transform.position, basicDoor.transform.rotation, basicDoor.transform.lossyScale);
+            DummyDoor dummy = doorSchematic.gameObject.AddComponent<DummyDoor>();
+            AdvancedMERTools.Singleton.DummyDoors.Add(dummy);
+
+            dummy.SerializableDoor = __instance;
+            dummy.RealDoor = Door.Get(basicDoor);
+        }
+    }
+}
+
+[HarmonyPatch(nameof(DoorVariant), nameof(DoorVariant.NetworkTargetState), MethodType.Setter)]
+public static class DoorVariantPatcher
+{
+    private static void Prefix(DoorVariant __instance, bool value)
+    {
+
+        Log.Debug($"Patching DoorVariant.NetworkTargetState: {__instance} - value: {value}");
+
+        if (__instance == null)
+        {
+            return;
+        }
+
+        DummyDoor d = AdvancedMERTools.Singleton.DummyDoors.Find(x => x.RealDoor == Door.Get(__instance));
+
+        if (d != null)
+        {
+            d.OnInteractDoor(value);
+        }
+    }
+}
 
 //[HarmonyPatch(nameof(DoorVariant), nameof(DoorVariant.NetworkActiveLocks), MethodType.Setter)]
 //public class DoorVariantLockPatcher
