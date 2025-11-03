@@ -158,7 +158,6 @@ public class IODTO : MDTO
     public Scp914Mode Scp914Mode { get; set; }
     public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
     public bool RequireAllPermissions { get; set; } = true;
-    public MDTO ExecuteOnPermissionFail { get; set; } = new MDTO();
 }
 
 //TODO: On AMERTDTOs: potentially consider another approach to create F variants? Not the most knowledgable but maybe inheritence isnt 100% the best idea here.
@@ -171,7 +170,6 @@ public class FIODTO : FMDTO
     public ScriptValue Scp914Mode { get; set; }
     public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
     public bool RequireAllPermissions { get; set; } = true;
-    public FMDTO ExecuteOnPermissionFail { get; set; } = new FMDTO();
 }
 
 [Serializable]
