@@ -1528,7 +1528,7 @@ public class PlayerUnaryOp : Value
             case PlayerUnaryOpType.IsAlive:
                 return p.IsAlive;
             case PlayerUnaryOpType.IsCHI:
-                return false;               // TODO: No idea what CHI is
+                return p.Team == Team.ChaosInsurgency;
             case PlayerUnaryOpType.IsCuffed:
                 return p.IsDisarmed;
             case PlayerUnaryOpType.IsDead:
