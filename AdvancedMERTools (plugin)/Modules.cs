@@ -158,8 +158,10 @@ public class IODTO : MDTO
     public Scp914Mode Scp914Mode { get; set; }
     public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
     public bool RequireAllPermissions { get; set; } = true;
+    public MDTO ExecuteOnPermissionFail { get; set; } = new MDTO();
 }
 
+//TODO: On AMERTDTOs: potentially consider another approach to create F variants? Not the most knowledgable but maybe inheritence isnt 100% the best idea here.
 [Serializable]
 public class FIODTO : FMDTO
 {
@@ -169,6 +171,7 @@ public class FIODTO : FMDTO
     public ScriptValue Scp914Mode { get; set; }
     public DoorPermissionFlags RequiredPermissions { get; set; } = DoorPermissionFlags.None;
     public bool RequireAllPermissions { get; set; } = true;
+    public FMDTO ExecuteOnPermissionFail { get; set; } = new FMDTO();
 }
 
 [Serializable]
@@ -944,9 +947,9 @@ public class DropItem : RandomExecutionModule
     {
         MEC.Timing.CallDelayed(ActionDelay, () =>
         {
-            // TODO: Not sure how to do CustomItems in LabAPI yet, for now just use Item
+            // TODO: Add support for custom item system (EXILED probably? Or another API)
             Vector3 position = args.Transform.TransformPoint(DropLocalPosition);
-            if (CustomItemId != 0 && Item.TryGet((ushort)CustomItemId, out Item customItem))
+            /*if (CustomItemId != 0 && Item.TryGet((ushort)CustomItemId, out Item customItem))
             {
                 for (int i = 0; i < Count; i++)
                 {
@@ -955,12 +958,12 @@ public class DropItem : RandomExecutionModule
                     customPickup.Spawn();
                 }
             }
+            else */if (!InventoryItemLoader.AvailableItems.TryGetValue(ItemType, out ItemBase itemBase) || itemBase.PickupDropModel == null)
+            {
+                return;
+            }
             else
             {
-                if (!InventoryItemLoader.AvailableItems.TryGetValue(ItemType, out ItemBase itemBase) || itemBase.PickupDropModel == null)
-                {
-                    return;
-                }
                 for (int i = 0; i < Count; i++)
                 {
                     ItemPickupBase itemPickupBase = UnityEngine.Object.Instantiate<ItemPickupBase>(itemBase.PickupDropModel, position, args.Transform.rotation);
