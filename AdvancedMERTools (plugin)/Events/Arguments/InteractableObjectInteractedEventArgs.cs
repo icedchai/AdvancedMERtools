@@ -10,13 +10,15 @@ namespace AdvancedMERTools.Events.Arguments
 {
     public class InteractableObjectInteractedEventArgs : EventArgs, IPlayerEvent
     {
+        public InteractableObject InteractableObject { get; set; }
         public IODTO IODTO { get; set; }
         public Player Player { get; set; }
 
-        public InteractableObjectInteractedEventArgs(Player player, IODTO interactableObject)
+        public InteractableObjectInteractedEventArgs(Player player, IODTO iodto, InteractableObject interactableObject)
         {
             Player = player;
-            IODTO = interactableObject;
+            IODTO = iodto;
+            InteractableObject = interactableObject;
         }
     }
 }

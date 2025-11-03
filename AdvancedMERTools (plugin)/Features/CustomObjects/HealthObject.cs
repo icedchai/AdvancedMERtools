@@ -233,15 +233,7 @@ public class HealthObject : AMERTInteractable, IDestructible
 
     public virtual void CheckDead(Player player, float damage)
     {
-        HODTO clone = new()
-        {
-            Health = Base.Health,
-            ArmorEfficient = Base.ArmorEfficient,
-            DeadType = Base.DeadType,
-            ObjectId = Base.ObjectId,
-        };
-
-        HealthObjectTakingDamageEventArgs damagingEventArgs = new HealthObjectTakingDamageEventArgs(clone, player);
+        HealthObjectTakingDamageEventArgs damagingEventArgs = new HealthObjectTakingDamageEventArgs(Base, player, this);
         HealthObjectEventHandlers.OnHealthObjectTakingDamage(damagingEventArgs);
 
         if (!damagingEventArgs.IsAllowed)
@@ -263,7 +255,7 @@ public class HealthObject : AMERTInteractable, IDestructible
                 Transform = transform,
                 TargetCalculated = false,
             };
-            HealthObjectEventHandlers.OnHealthObjectDied(new HealthObjectDiedEventArgs(clone, player));
+            HealthObjectEventHandlers.OnHealthObjectDied(new HealthObjectDiedEventArgs(Base, player, this));
 
             MEC.Timing.CallDelayed(Base.DeadActionDelay, () =>
             {

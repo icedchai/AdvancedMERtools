@@ -1,4 +1,5 @@
-﻿using LabApi.Events.Arguments.Interfaces;
+﻿using AdvancedMERTools.Features.CustomObjects;
+using LabApi.Events.Arguments.Interfaces;
 using LabApi.Features.Wrappers;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,14 @@ namespace AdvancedMERTools.Events.Arguments
 {
     public class HealthObjectDiedEventArgs : EventArgs, IPlayerEvent
     {
-        public HODTO HealthObject { get; set; }
+        public HealthObject HealthObject { get; set; }
+        public HODTO HODTO { get; set; }
         public Player Player { get; set; }
 
-        public HealthObjectDiedEventArgs(HODTO healthObject, Player attacker)
+        public HealthObjectDiedEventArgs(HODTO hodto, Player attacker, HealthObject healthObject)
         {
             HealthObject = healthObject;
+            HODTO = hodto;
             Player = attacker;
         }
     }

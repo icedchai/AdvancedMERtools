@@ -224,12 +224,7 @@ public class InteractableObject : AMERTInteractable
             }
         }
 
-        IODTO clone = new IODTO
-        {
-            ObjectId = Base.ObjectId,
-            InputKeyCode = Base.InputKeyCode,
-        };
-        InteractableObjectEventHandlers.OnPlayerIOInteracted(new InteractableObjectInteractedEventArgs(player, clone));
+        InteractableObjectEventHandlers.OnPlayerIOInteracted(new InteractableObjectInteractedEventArgs(player, Base, this));
     }
 }
 
