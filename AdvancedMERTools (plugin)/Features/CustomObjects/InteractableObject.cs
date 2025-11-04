@@ -257,6 +257,7 @@ public class FInteractableObject : InteractableObject
         {
             if (!player.ReferenceHub.GetCombinedPermissions(DoorPermRequester).HasFlagAny(Base.RequiredPermissions))
             {
+                // TODO: clean implementation of alternative functions ran when permission denied
                 Log.Debug($"Player: {player.Nickname} failed interact with InteractableObject: {gameObject.name} ({OSchematic.Name}) -- toy id: {toyId} because insufficient keycard permission");
                 return;
             }

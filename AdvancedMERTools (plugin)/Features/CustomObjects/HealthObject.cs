@@ -15,6 +15,7 @@ using AdvancedMERTools.Events.Handlers;
 
 namespace AdvancedMERTools.Features.CustomObjects;
 
+// TODO: investigate why health objs dont always work the way theyre supposed to
 public class Healther : NetworkBehaviour, IDestructible
 {
     public List<HealthObject> Parents { get; set; } = new();
